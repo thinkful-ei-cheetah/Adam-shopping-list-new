@@ -1,11 +1,14 @@
 'use strict';
 
-const STORE = [
+const STORE = {
+items:[
   {id: cuid(), name: "apples", checked: false},
   {id: cuid(), name: "oranges", checked: false},
   {id: cuid(), name: "milk", checked: true},
   {id: cuid(), name: "bread", checked: false}
-];
+  ],
+  hideCompleted: false
+};
 
 
 function generateItemElement(item) {
@@ -36,8 +39,14 @@ function generateShoppingItemsString(shoppingList) {
 function renderShoppingList() {
   // render the shopping list in the DOM
   //console.log('`renderShoppingList` ran');
-  const shoppingListItemsString = generateShoppingItemsString(STORE);
+  //const shoppingListItemsString = generateShoppingItemsString(STORE);
 
+  let filteredItems = STORE.items;
+
+  if(STORE.hideCompleted){
+    filteredItems = filteredItems.filter(item => !item.checked);
+  }
+  const shoppingListItemsString = generateShoppingItemsString(filteredItems);
   // insert that HTML into the DOM
   $('.js-shopping-list').html(shoppingListItemsString);
 }
@@ -45,7 +54,7 @@ function renderShoppingList() {
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.push({id: cuid(), name: itemName, checked: false});
+  STORE.items.push({id: cuid(), name: itemName, checked: false});
 }
 
 function handleNewItemSubmit() {
@@ -61,7 +70,7 @@ function handleNewItemSubmit() {
 
 function toggleCheckedForListItem(itemId) {
   console.log("Toggling checked property for item with id " + itemId);
-  const item = STORE.find(item => item.id === itemId);
+  const item = STORE.items.find(item => item.id === itemId);
   item.checked = !item.checked;
 }
 
@@ -90,22 +99,29 @@ function deleteListItem(itemId){
   //   STORE.splice(item, 1);
   // could not find what I was doing wrong so I broke down and looked at solution
   // I needed .findIndex not .find
-  const itemIndex = STORE.findIndex(item => item.id === itemId);
-  STORE.splice(itemIndex, 1);
-  
+  const itemIndex = STORE.items.findIndex(item => item.id === itemId);
+  STORE.items.splice(itemIndex, 1);
 }
 
 function handleDeleteItemClicked() {
-  // this function will be responsible for when users want to delete a shopping list
-  // item
 $('.js-shopping-list').on('click', `.js-item-delete`, event =>{
     //console.log('`handleDeleteItemClicked` ran');
     const id = getItemIdFromElement(event.currentTarget);
     deleteListItem(id);
     renderShoppingList();
   });
+}
 
-  
+//toggle the STORE.hideCompleted prop
+function toggleHideFilter(){
+  STORE.hideCompleted = !STORE.hideCompleted;
+}
+
+function handleToggleHideFilter(){
+  $('.js-hide-completed-toggle').on('click', () =>{
+    toggleHideFilter();
+    renderShoppingList();
+  });
 }
 
 // this function will be our callback when the page loads. it's responsible for
@@ -117,6 +133,7 @@ function handleShoppingList() {
   handleNewItemSubmit();
   handleItemCheckClicked();
   handleDeleteItemClicked();
+  handleToggleHideFilter();
 }
 
 // when the page loads, call `handleShoppingList`
