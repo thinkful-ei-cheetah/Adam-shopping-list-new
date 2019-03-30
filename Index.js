@@ -124,6 +124,21 @@ function handleToggleHideFilter(){
   });
 }
 
+// function filteredItemsList(itemName){
+//   const item = STORE.items.findIndex(item => item.Name === itemName);
+//   console.log(item);
+
+// }
+
+// function handleFilteredItemsList(){
+//   let itemName = STORE.items.name;
+//   $(`#js-shopping-list-entry:contains('${itemName}')`), event => {
+//   const id = getItemIdFromElement(event.currentTarget);
+//   filteredItemsList(id);
+//   renderShoppingList();
+//   };
+// }
+
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
 // that handle new item submission and user clicks on the "check" and "delete" buttons
@@ -134,6 +149,7 @@ function handleShoppingList() {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleToggleHideFilter();
+  handleFilteredItemsList();
 }
 
 // when the page loads, call `handleShoppingList`
